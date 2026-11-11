@@ -9,6 +9,7 @@
     <title>Simple EHR on Azure</title>
 
     <style>
+        /* General Styling */
         * {
             box-sizing: border-box;
         }
@@ -21,6 +22,7 @@
             color: #203447;
         }
 
+        /* Main Container */
         main {
             max-width: 900px;
             margin: auto;
@@ -40,13 +42,15 @@
             color: #526575;
         }
 
+        /* Form Styling */
         label {
             display: block;
             margin-top: 16px;
             font-weight: bold;
         }
 
-        input, textarea {
+        input,
+        textarea {
             width: 100%;
             margin-top: 7px;
             padding: 11px;
@@ -55,11 +59,13 @@
             font: inherit;
         }
 
-        input:focus, textarea:focus {
+        input:focus,
+        textarea:focus {
             outline: 2px solid #146b83;
             outline-offset: 2px;
         }
 
+        /* Button Styling */
         button {
             margin-top: 18px;
             padding: 12px 20px;
@@ -75,11 +81,13 @@
             background: #0e5063;
         }
 
+        /* Status Message */
         #message {
             min-height: 24px;
             color: #146b83;
         }
 
+        /* Patient Records Table */
         .table-container {
             overflow-x: auto;
         }
@@ -90,7 +98,8 @@
             border-collapse: collapse;
         }
 
-        th, td {
+        th,
+        td {
             padding: 12px;
             border: 1px solid #ccd7df;
             text-align: left;
@@ -102,12 +111,14 @@
             background: #e7f2f6;
         }
 
+        /* Footer */
         footer {
             margin-top: 24px;
             font-size: 14px;
             color: #526575;
         }
 
+        /* Responsive Design */
         @media (max-width: 600px) {
             body {
                 padding: 12px;
@@ -126,265 +137,155 @@
 
 <body>
 
-<main>
+    <main>
 
-    <h1>Electronic Health Record</h1>
+        <h1>Electronic Health Record</h1>
 
-    <p class="description">
-        A simple EHR demonstration hosted on Microsoft Azure.
-        Use fictional patient information only.
-    </p>
+        <p class="description">
+            A simple EHR demonstration hosted on Microsoft Azure.
+            Use fictional patient information only.
+        </p>
 
-    <h2>Patient Entry Form</h2>
+        <!-- Patient Entry Form -->
+        <h2>Patient Entry Form</h2>
 
-    <form id="patientForm">
+        <form id="patientForm">
 
-        <label for="patientId">Patient ID</label>
-        <input
-            id="patientId"
-            placeholder="Example: P001"
-            maxlength="30"
-            required
-        >
+            <label for="patientId">Patient ID</label>
+            <input
+                id="patientId"
+                placeholder="Example: P001"
+                maxlength="30"
+                required
+            >
 
-        <label for="patientName">Patient Name</label>
-        <input
-            id="patientName"
-            placeholder="Example: Demo Patient"
-            maxlength="100"
-            required
-        >
+            <label for="patientName">Patient Name</label>
+            <input
+                id="patientName"
+                placeholder="Example: Demo Patient"
+                maxlength="100"
+                required
+            >
 
-        <label for="age">Age in years</label>
-        <input
-            id="age"
-            type="number"
-            min="0"
-            max="120"
-            step="1"
-            required
-        >
+            <label for="age">Age in years</label>
+            <input
+                id="age"
+                type="number"
+                min="0"
+                max="120"
+                step="1"
+                required
+            >
 
-        <label for="notes">Clinical Notes</label>
-        <textarea
-            id="notes"
-            rows="3"
-            placeholder="Enter sample clinical notes"
-            maxlength="500"
-            required
-        ></textarea>
+            <label for="notes">Clinical Notes</label>
+            <textarea
+                id="notes"
+                rows="3"
+                placeholder="Enter sample clinical notes"
+                maxlength="500"
+                required
+            ></textarea>
 
-        <button type="submit">
-            Add Patient Record
-        </button>
+            <button type="submit">
+                Add Patient Record
+            </button>
 
-    </form>
+        </form>
 
-    <p id="message" role="status"></p>
+        <!-- Status Message -->
+        <p id="message" role="status"></p>
 
-    <h2>Patient Records</h2>
+        <!-- Patient Records Display -->
+        <h2>Patient Records</h2>
 
-    <p>
-        Patient records are saved in browser localStorage
-        and remain available after refreshing the page.
-    </p>
+        <p>
+            These records are temporary and disappear when
+            the page is refreshed.
+        </p>
 
-    <div class="table-container">
+        <div class="table-container">
 
-        <table>
+            <table>
 
-            <thead>
-                <tr>
-                    <th>Patient ID</th>
-                    <th>Name</th>
-                    <th>Age</th>
-                    <th>Clinical Notes</th>
-                </tr>
-            </thead>
+                <thead>
+                    <tr>
+                        <th>Patient ID</th>
+                        <th>Name</th>
+                        <th>Age</th>
+                        <th>Clinical Notes</th>
+                    </tr>
+                </thead>
 
-            <tbody id="records"></tbody>
+                <tbody id="records">
+                    <!-- Patient records will appear here -->
+                </tbody>
 
-        </table>
+            </table>
 
-    </div>
+        </div>
 
-    <footer>
-        Educational EHR Demonstration | Microsoft Azure
-    </footer>
+        <!-- Footer -->
+        <footer>
+            Educational EHR Demonstration | Microsoft Azure
+        </footer>
 
-</main>
+    </main>
 
-<script>
+    <!-- JavaScript Functionality -->
+    <script>
 
-    // Get HTML Elements
+        const form = document.getElementById("patientForm");
+        const records = document.getElementById("records");
+        const message = document.getElementById("message");
 
-    const form = document.getElementById("patientForm");
-    const records = document.getElementById("records");
-    const message = document.getElementById("message");
+        // Handle Patient Form Submission
+        form.addEventListener("submit", function (event) {
 
-    // Retrieve saved patient records from localStorage
+            event.preventDefault();
 
-    let patients = [];
-
-    try {
-        patients = JSON.parse(
-            localStorage.getItem("patients") || "[]"
-        );
-
-        if (
-            !Array.isArray(patients) ||
-            !patients.every(patient =>
-                patient &&
-                typeof patient.id === "string" &&
-                typeof patient.name === "string" &&
-                typeof patient.age === "string" &&
-                typeof patient.notes === "string"
-            )
-        ) {
-            patients = [];
-        }
-
-    } catch (error) {
-        patients = [];
-    }
-
-    // Save patient records to localStorage
-
-    function savePatients() {
-
-        try {
-            localStorage.setItem(
-                "patients",
-                JSON.stringify(patients)
-            );
-
-            return true;
-
-        } catch (error) {
-
-            message.textContent =
-                "Unable to save records in browser storage.";
-
-            return false;
-        }
-    }
-
-    // Display saved patient records
-
-    function displayPatients() {
-
-        records.replaceChildren();
-
-        patients.forEach(function(patient) {
-
-            const row = document.createElement("tr");
-
+            // Collect Patient Information
             const values = [
-                patient.id,
-                patient.name,
-                patient.age,
-                patient.notes
+                document.getElementById("patientId").value.trim(),
+                document.getElementById("patientName").value.trim(),
+                document.getElementById("age").value,
+                document.getElementById("notes").value.trim()
             ];
 
-            values.forEach(function(value) {
+            // Validate Form Fields
+            if (values.some(value => value === "")) {
+                message.textContent = "Please complete every field.";
+                return;
+            }
+
+            // Create a New Table Row
+            const row = document.createElement("tr");
+
+            values.forEach(function (value) {
 
                 const cell = document.createElement("td");
 
+                // Use textContent for safe text insertion
                 cell.textContent = value;
 
                 row.appendChild(cell);
 
             });
 
+            // Add Patient Record to the Table
             records.appendChild(row);
+
+            // Display Success Message
+            message.textContent = "Patient record added successfully.";
+
+            // Reset Form
+            form.reset();
+
+            // Focus on Patient ID Field
+            document.getElementById("patientId").focus();
 
         });
 
-    }
-
-    // Handle Patient Form Submission
-
-    form.addEventListener("submit", function(event) {
-
-        event.preventDefault();
-
-        // Collect patient information
-
-        const values = [
-            document.getElementById("patientId").value.trim(),
-            document.getElementById("patientName").value.trim(),
-            document.getElementById("age").value.trim(),
-            document.getElementById("notes").value.trim()
-        ];
-
-        // Check empty fields
-
-        if (values.some(value => value === "")) {
-
-            message.textContent =
-                "Please complete every field.";
-
-            return;
-        }
-
-        // Validate age
-
-        const age = Number(values[2]);
-
-        if (
-            !Number.isInteger(age) ||
-            age < 0 ||
-            age > 120
-        ) {
-
-            message.textContent =
-                "Age must be an integer between 0 and 120.";
-
-            return;
-        }
-
-        // Create patient record
-
-        const newPatient = {
-            id: values[0],
-            name: values[1],
-            age: values[2],
-            notes: values[3]
-        };
-
-        // Add record to array
-
-        patients.push(newPatient);
-
-        // Save records permanently in browser storage
-
-        if (!savePatients()) {
-
-            patients.pop();
-            return;
-
-        }
-
-        // Display updated records
-
-        displayPatients();
-
-        message.textContent =
-            "Patient record added and saved successfully.";
-
-        // Reset form
-
-        form.reset();
-
-        document.getElementById("patientId").focus();
-
-    });
-
-    // Display previously saved records when page loads
-
-    displayPatients();
-
-</script>
+    </script>
 
 </body>
 </html>
