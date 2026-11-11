@@ -1,2 +1,2 @@
-# simple-ehr-azure-
+# simple-ehr-azure
 Simple EHR page hosted on Azure 
