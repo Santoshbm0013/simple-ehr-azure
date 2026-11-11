@@ -233,6 +233,10 @@
 
     <!-- JavaScript Functionality -->
     <script>
+          patients.forEach(function(patient) {
+    // Re-create and display each saved patient row
+
+
 
         const form = document.getElementById("patientForm");
         const records = document.getElementById("records");
@@ -298,7 +302,9 @@ function savePatients() {
             // Focus on Patient ID Field
             document.getElementById("patientId").focus();
 
+          
         });
+ });
 
     </script>
 
