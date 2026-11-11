@@ -238,6 +238,19 @@
         const records = document.getElementById("records");
         const message = document.getElementById("message");
 
+        // Retrieve existing patient records from localStorage
+let patients = JSON.parse(
+    localStorage.getItem("patients") || "[]"
+);
+
+// Save patient records to localStorage
+function savePatients() {
+    localStorage.setItem(
+        "patients",
+        JSON.stringify(patients)
+    );
+}
+
         // Handle Patient Form Submission
         form.addEventListener("submit", function (event) {
 
@@ -273,6 +286,8 @@
 
             // Add Patient Record to the Table
             records.appendChild(row);
+
+            savePatients();
 
             // Display Success Message
             message.textContent = "Patient record added successfully.";
